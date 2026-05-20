@@ -52,14 +52,14 @@ const windows: WindowConfig[] = [
   { id: "contact", title: "CONTACT", icon: Mail, color: "bg-white", shadow: "shadow-brutal-black", pos: "md:left-[37%] md:top-[55%]" },
 ];
 
-const defaultOpen: WindowId[] = ["profile", "projects", "botLab"];
+const defaultOpen: WindowId[] = ["projects"];
 const initialWindowState = windows.reduce<Record<WindowId, WindowState>>((acc, window) => {
   acc[window.id] = defaultOpen.includes(window.id) ? "open" : "closed";
   return acc;
 }, {} as Record<WindowId, WindowState>);
 const windowIds = windows.map((window) => window.id);
 const initialWindowSize = windows.reduce<Record<WindowId, WindowSize>>((acc, window) => {
-  acc[window.id] = "normal";
+  acc[window.id] = window.id === "projects" ? "maximized" : "normal";
   return acc;
 }, {} as Record<WindowId, WindowSize>);
 
@@ -105,7 +105,7 @@ function useClock() {
 
 function WindowBody({ id }: { id: WindowId }) {
   if (id === "profile") {
-    return <div className="space-y-4"><p className="text-xl font-black uppercase">Ayasa // Flevance18</p><p>Anime-neobrutalist command operator building AI agents, DeFi intelligence, bot automation, and sharp web experiences with chaotic-cute precision.</p><div className="grid grid-cols-3 gap-2 text-center font-mono text-xs"><b className="brutal-chip bg-[#ffee00]">AI</b><b className="brutal-chip bg-[#00ffff]">DEFI</b><b className="brutal-chip bg-[#ff00ff]">OS</b></div></div>;
+    return <div className="grid gap-4 md:grid-cols-[150px_1fr] md:items-start"><div className="border-4 border-black bg-white p-2 shadow-[5px_5px_0_#ff00ff]"><Image src="/ayasa-profile.jpg" alt="Ayasa profile portrait" width={240} height={240} className="aspect-square w-full object-cover" priority /></div><div className="space-y-4"><p className="font-mono text-xs font-black uppercase text-black/70">Ayasa // Flevance18</p><h2 className="text-2xl font-black uppercase leading-none md:text-3xl">I AM A FORENSIC RESEARCHER &amp; MINING OPTIMIZER.</h2><p className="text-sm font-bold leading-tight md:text-base">Surgical analysis of decentralized protocols, hardening of mining ecosystems, and relentless tracking of systemic anomalies. Turning chaotic data into actionable intelligence.</p><div className="grid grid-cols-3 gap-2 text-center font-mono text-xs"><b className="brutal-chip bg-[#ffee00]">FORENSIC</b><b className="brutal-chip bg-[#00ffff]">MINING</b><b className="brutal-chip bg-[#ff00ff]">INTEL</b></div></div></div>;
   }
   if (id === "projects") {
     return <div className="space-y-4"><div><p className="font-black uppercase">Active project board</p><p className="font-mono text-xs font-bold text-black/70">Ayasa proof-of-work: tactical reports, DeFi bot research, and shipped interactive systems.</p></div>{projects.map((project, index) => <article key={project.id} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><div className="flex flex-wrap items-start justify-between gap-2"><span className="font-mono text-xs font-black">0{index + 1}</span><span className={clsx("border-2 border-black px-2 py-1 font-mono text-[10px] font-black uppercase", accentClass[project.accent])}>{project.status}</span></div><h3 className="mt-2 text-xl font-black uppercase leading-none">{project.title}</h3><p className="mt-1 font-mono text-[11px] font-black uppercase text-black/70">{project.category}</p><p className="mt-3 text-sm font-bold leading-tight">{project.summary}</p><div className="mt-3 flex flex-wrap gap-2"><StatusChip>{project.stage}</StatusChip><StatusChip>{project.visibility}</StatusChip></div></article>)}</div>;
