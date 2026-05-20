@@ -9,7 +9,6 @@ import Image from "next/image";
 import clsx from "clsx";
 import {
   Activity,
-  Bot,
   BriefcaseBusiness,
   ClipboardList,
   GitBranch,
@@ -29,7 +28,7 @@ import {
 import type { ElementType, ReactNode } from "react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
-type WindowId = "profile" | "projects" | "botLab" | "caseStudies" | "defi" | "buildLog" | "github" | "flev" | "contact";
+type WindowId = "profile" | "projects" | "botLab" | "caseStudies" | "defi" | "buildLog" | "github" | "contact";
 type WindowState = "closed" | "open" | "minimized";
 type WindowSize = "normal" | "maximized";
 
@@ -50,7 +49,6 @@ const windows: WindowConfig[] = [
   { id: "defi", title: "DEFI INTEL", icon: TrendingUp, color: "bg-[#050606] text-[#fdfaf1]", shadow: "shadow-brutal-pink", pos: "md:left-[44%] md:top-[50%]" },
   { id: "buildLog", title: "BUILD LOG", icon: ClipboardList, color: "bg-[#ffee00]", shadow: "shadow-brutal-black", pos: "md:left-[66%] md:top-[52%]" },
   { id: "github", title: "GITHUB", icon: GitBranch, color: "bg-[#00ffff]", shadow: "shadow-brutal-purple", pos: "md:left-[38%] md:top-[12%]" },
-  { id: "flev", title: "FLEV AGENT", icon: Bot, color: "bg-[#bc13fe]", shadow: "shadow-brutal-yellow", pos: "md:left-[58%] md:top-[42%]" },
   { id: "contact", title: "CONTACT", icon: Mail, color: "bg-white", shadow: "shadow-brutal-black", pos: "md:left-[37%] md:top-[55%]" },
 ];
 
@@ -128,9 +126,6 @@ function WindowBody({ id }: { id: WindowId }) {
   if (id === "github") {
     return <div className="space-y-3"><p className="font-bold">Live GitHub signal for <span className="font-mono">Flevance18</span>.</p><Image unoptimized width={460} height={190} className="w-full border-4 border-black bg-white" alt="Flevance18 GitHub stats" src="https://github-readme-stats-sigma-five.vercel.app/api?username=Flevance18&show_icons=true&theme=radical&hide_border=true&title_color=ff00ff&icon_color=ffee00" /><a className="neo-button inline-flex" href="https://github.com/Flevance18" target="_blank" rel="noreferrer">Open GitHub ↗</a></div>;
   }
-  if (id === "flev") {
-    return <div className="space-y-4"><p className="font-mono text-sm">&gt; FLEV_AGENT booted. Persona: fast, direct, research-heavy.</p><div className="halftone-yellow border-4 border-black p-4"><b>Mission:</b> convert vague ideas into shipped interfaces, intelligence dashboards, and automations.</div><button className="neo-button">Run diagnostic</button></div>;
-  }
   return <div className="space-y-4"><p>Patch into Ayasa channels.</p><div className="flex flex-wrap gap-3"><a className="neo-button" href="https://github.com/Flevance18" target="_blank" rel="noreferrer">GitHub</a><a className="neo-button bg-[#00ffff]" href="https://x.com/Ayasa_18" target="_blank" rel="noreferrer">X / Twitter</a></div><p className="font-mono text-xs">No secrets stored. External links only.</p></div>;
 }
 
@@ -174,7 +169,7 @@ export default function CommandCenter() {
     let output = "";
 
     if (command === "help") {
-      output = "commands: help, open <profile|projects|botLab|caseStudies|defi|buildLog|github|flev|contact>, close <window>, minimize <window>, maximize <window>, terminal hide, terminal show, reset, contact";
+      output = "commands: help, open <profile|projects|botLab|caseStudies|defi|buildLog|github|contact>, close <window>, minimize <window>, maximize <window>, terminal hide, terminal show, reset, contact";
     } else if (parts[0] === "open" && requestedWindow) {
       launch(requestedWindow);
       output = `opened ${requestedWindow}`;
@@ -213,7 +208,7 @@ export default function CommandCenter() {
     <header className="mb-4 flex flex-col gap-3 border-[5px] border-black bg-white p-3 shadow-brutal-black md:flex-row md:items-center md:justify-between"><div><p className="font-mono text-xs">STATUS: ONLINE / UTC {clock.utc} / LOCAL {clock.local}</p><div className="flex flex-wrap items-center gap-3"><h1 className="text-3xl font-black uppercase md:text-5xl">Ayasa OS</h1><a href="https://ayasa-profile.vercel.app/" className="neo-button bg-[#ffee00] py-1 px-2 text-xs font-black uppercase border-2 border-black inline-block">← CLASSIC</a></div></div><div className="marquee border-4 border-black bg-[#ffee00] font-mono text-sm"><span>◆ LIVE TICKER ◆ PORTFOLIO OS ◆ DEFI INTEL ◆ BOT LAB ◆ CASE STUDIES ◆ BUILD LOG ◆&nbsp;</span></div></header>
     <section className="relative min-h-[70vh] md:min-h-[760px]" aria-label="Desktop command windows">
       <div className="pointer-events-none absolute inset-0 speed-lines" />
-      <AnimatePresence>{ordered.map((w, index) => { const Icon = w.icon; const isMaximized = windowSize[w.id] === "maximized"; return <motion.article key={w.id} layout drag={canDrag && !isMaximized} dragMomentum={false} dragElastic={0.08} whileDrag={{ scale: 1.02 }} initial={{ opacity: 0, y: 30, rotate: -1 }} animate={{ opacity: 1, y: 0, rotate: active === w.id ? 0 : -1 }} exit={{ opacity: 0, scale: .9 }} onMouseDown={() => setActive(w.id)} className={clsx("neo-window relative mb-5 w-full", !isMaximized && "md:absolute md:w-[390px]", isMaximized && "md:fixed md:left-4 md:right-4 md:top-[136px] md:bottom-28 md:z-40", canDrag && !isMaximized && "md:cursor-grab md:active:cursor-grabbing", !isMaximized && w.pos, w.shadow, active === w.id && "z-20", active !== w.id && !isMaximized && "z-10 opacity-90")} style={{ zIndex: isMaximized ? 40 : active === w.id ? 30 : 10 + index }}><div className={clsx("flex items-center justify-between border-b-4 border-black p-2", w.color)}><div className="flex items-center gap-2 font-black"><Icon size={20}/>{w.title}</div><div className="flex gap-1"><button aria-label={isMaximized ? `Restore ${w.title}` : `Maximize ${w.title}`} onClick={() => toggleMaximize(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black">{isMaximized ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}</button><button aria-label={`Minimize ${w.title}`} onClick={() => minimize(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black"><Minus size={18}/></button><button aria-label={`Close ${w.title}`} onClick={() => close(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black"><X size={18}/></button></div></div><div className={clsx("bg-[#fdfaf1] p-4", isMaximized && "h-[calc(100%-52px)] overflow-y-auto")}><WindowBody id={w.id}/></div></motion.article>; })}</AnimatePresence>
+      <AnimatePresence>{ordered.map((w, index) => { const Icon = w.icon; const isMaximized = windowSize[w.id] === "maximized"; return <motion.article key={w.id} drag={canDrag && !isMaximized} dragMomentum={false} dragElastic={0} whileDrag={{ scale: 1.01 }} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: .9 }} onMouseDown={() => setActive(w.id)} className={clsx("neo-window relative mb-5 w-full", !isMaximized && "md:absolute md:w-[390px]", isMaximized && "md:fixed md:left-4 md:right-4 md:top-[136px] md:bottom-28 md:z-40", canDrag && !isMaximized && "md:cursor-grab md:active:cursor-grabbing", !isMaximized && w.pos, w.shadow, active === w.id && "z-20", active !== w.id && !isMaximized && "z-10 opacity-90")} style={{ zIndex: isMaximized ? 40 : active === w.id ? 30 : 10 + index }}><div className={clsx("flex items-center justify-between border-b-4 border-black p-2", w.color)}><div className="flex items-center gap-2 font-black"><Icon size={20}/>{w.title}</div><div className="flex gap-1"><button aria-label={isMaximized ? `Restore ${w.title}` : `Maximize ${w.title}`} onClick={() => toggleMaximize(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black">{isMaximized ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}</button><button aria-label={`Minimize ${w.title}`} onClick={() => minimize(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black"><Minus size={18}/></button><button aria-label={`Close ${w.title}`} onClick={() => close(w.id)} className="grid size-8 place-items-center border-2 border-black bg-white text-black"><X size={18}/></button></div></div><div className={clsx("bg-[#fdfaf1] p-4", isMaximized && "h-[calc(100%-52px)] overflow-y-auto")}><WindowBody id={w.id}/></div></motion.article>; })}</AnimatePresence>
       {!terminalMinimized && <aside className="neo-window relative z-30 mt-4 w-full shadow-brutal-black md:absolute md:right-4 md:top-4 md:mt-0 md:w-[430px]" aria-label="Terminal command input"><div className="flex items-center justify-between gap-2 border-b-4 border-black bg-[#050606] p-2 font-black text-[#00ffff]"><div className="flex items-center gap-2"><Terminal size={20}/> TERMINAL</div><button aria-label="Minimize terminal" onClick={() => setTerminalMinimized(true)} className="grid size-8 place-items-center border-2 border-[#00ffff] bg-black text-[#00ffff]"><Minus size={18}/></button></div><div className="bg-[#050606] p-3 font-mono text-sm text-[#fdfaf1]">{terminalLog.map((line, i) => <p key={`${line}-${i}`}>{line}</p>)}<form onSubmit={runCommand} className="mt-3 flex gap-2"><label className="sr-only" htmlFor="terminal-command">Terminal command</label><input id="terminal-command" value={terminalInput} onChange={(event) => setTerminalInput(event.target.value)} className="min-w-0 flex-1 border-2 border-[#00ffff] bg-black px-2 py-1 text-[#ffee00] outline-none" placeholder="help / open projects" autoComplete="off"/><button className="border-2 border-[#ffee00] bg-[#ff00ff] px-3 py-1 font-black text-black" type="submit">RUN</button></form></div></aside>}
       {terminalMinimized && <button onClick={() => setTerminalMinimized(false)} className="fixed bottom-24 right-4 z-50 flex items-center gap-2 border-4 border-black bg-[#050606] px-3 py-2 font-mono text-xs font-black text-[#00ffff] shadow-brutal-black" aria-label="Restore terminal"><Terminal size={16}/> TERMINAL</button>}
     </section>
