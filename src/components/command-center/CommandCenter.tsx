@@ -133,7 +133,7 @@ export default function CommandCenter() {
   const [booted, setBooted] = useState(false);
   const [windowState, setWindowState] = useState<Record<WindowId, WindowState>>(initialWindowState);
   const [windowSize, setWindowSize] = useState<Record<WindowId, WindowSize>>(initialWindowSize);
-  const [active, setActive] = useState<WindowId>("profile");
+  const [active, setActive] = useState<WindowId>("projects");
   const [terminalMinimized, setTerminalMinimized] = useState(false);
   const [terminalInput, setTerminalInput] = useState("");
   const [terminalLog, setTerminalLog] = useState<string[]>(["> ayasa portfolio os ready", "> type `open projects` or `open botLab`"]);
@@ -142,6 +142,13 @@ export default function CommandCenter() {
 
   const ordered = useMemo(() => windows.filter((w) => windowState[w.id] === "open"), [windowState]);
   const launch = (id: WindowId) => { setWindowState((v) => ({ ...v, [id]: "open" })); setActive(id); };
+  const toggleDockWindow = (id: WindowId) => {
+    if (windowState[id] === "open" && active === id) {
+      setWindowState((v) => ({ ...v, [id]: "minimized" }));
+      return;
+    }
+    launch(id);
+  };
   const minimize = (id: WindowId) => setWindowState((v) => ({ ...v, [id]: "minimized" }));
   const close = (id: WindowId) => {
     setWindowState((v) => ({ ...v, [id]: "closed" }));
@@ -156,7 +163,7 @@ export default function CommandCenter() {
     setWindowState(initialWindowState);
     setWindowSize(initialWindowSize);
     setTerminalMinimized(false);
-    setActive("profile");
+    setActive("projects");
   };
 
   const runCommand = (event: FormEvent<HTMLFormElement>) => {
@@ -212,7 +219,7 @@ export default function CommandCenter() {
       {!terminalMinimized && <aside className="neo-window relative z-30 mt-4 w-full shadow-brutal-black md:absolute md:right-4 md:top-4 md:mt-0 md:w-[430px]" aria-label="Terminal command input"><div className="flex items-center justify-between gap-2 border-b-4 border-black bg-[#050606] p-2 font-black text-[#00ffff]"><div className="flex items-center gap-2"><Terminal size={20}/> TERMINAL</div><button aria-label="Minimize terminal" onClick={() => setTerminalMinimized(true)} className="grid size-8 place-items-center border-2 border-[#00ffff] bg-black text-[#00ffff]"><Minus size={18}/></button></div><div className="bg-[#050606] p-3 font-mono text-sm text-[#fdfaf1]">{terminalLog.map((line, i) => <p key={`${line}-${i}`}>{line}</p>)}<form onSubmit={runCommand} className="mt-3 flex gap-2"><label className="sr-only" htmlFor="terminal-command">Terminal command</label><input id="terminal-command" value={terminalInput} onChange={(event) => setTerminalInput(event.target.value)} className="min-w-0 flex-1 border-2 border-[#00ffff] bg-black px-2 py-1 text-[#ffee00] outline-none" placeholder="help / open projects" autoComplete="off"/><button className="border-2 border-[#ffee00] bg-[#ff00ff] px-3 py-1 font-black text-black" type="submit">RUN</button></form></div></aside>}
       {terminalMinimized && <button onClick={() => setTerminalMinimized(false)} className="fixed bottom-24 right-4 z-50 flex items-center gap-2 border-4 border-black bg-[#050606] px-3 py-2 font-mono text-xs font-black text-[#00ffff] shadow-brutal-black" aria-label="Restore terminal"><Terminal size={16}/> TERMINAL</button>}
     </section>
-    <nav className="dock fixed bottom-3 left-1/2 z-40 flex max-w-[94vw] -translate-x-1/2 gap-2 overflow-x-auto border-[5px] border-black bg-white p-2 shadow-brutal-purple" aria-label="Window dock">{windows.map((w) => { const Icon = w.icon; const state = windowState[w.id]; return <button key={w.id} onClick={() => launch(w.id)} className={clsx("dock-icon", w.color, state === "open" && "ring-4 ring-[#050606]", state === "minimized" && "opacity-70 ring-4 ring-[#ff00ff]", state === "closed" && "opacity-55")} title={`${w.title} (${state})`} aria-label={`${state === "minimized" ? "Restore" : "Open"} ${w.title}`}><Icon size={22}/><span className="hidden text-xs font-black md:inline">{w.title}</span></button>; })}</nav>
+    <nav className="dock fixed bottom-3 left-1/2 z-40 flex max-w-[94vw] -translate-x-1/2 gap-2 overflow-x-auto border-[5px] border-black bg-white p-2 shadow-brutal-purple" aria-label="Window dock">{windows.map((w) => { const Icon = w.icon; const state = windowState[w.id]; const isActiveOpen = state === "open" && active === w.id; return <button key={w.id} onClick={() => toggleDockWindow(w.id)} className={clsx("dock-icon", w.color, state === "open" && "ring-4 ring-[#050606]", state === "minimized" && "opacity-70 ring-4 ring-[#ff00ff]", state === "closed" && "opacity-55")} title={`${w.title} (${isActiveOpen ? "click to minimize" : state})`} aria-label={isActiveOpen ? `Minimize ${w.title}` : `${state === "minimized" ? "Restore" : "Open"} ${w.title}`}><Icon size={22}/><span className="hidden text-xs font-black md:inline">{w.title}</span></button>; })}</nav>
     <footer className="pb-24 pt-4 text-center font-mono text-xs"><ShieldCheck className="inline" size={14}/> public-safe portfolio OS / drag desktop windows / open projects + bot lab / sensitive data redacted</footer>
   </main>;
 }
