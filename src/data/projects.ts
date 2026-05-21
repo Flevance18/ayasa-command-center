@@ -1,4 +1,4 @@
-export type ProjectStatus = "Completed Tactical Report" | "In Progress" | "Live" | "Prototype";
+export type ProjectStatus = "Completed Tactical Report" | "In Progress" | "Live" | "Prototype" | "Shipped Intelligence Engine";
 
 export type Project = {
   id: string;
@@ -19,18 +19,18 @@ export const projects: Project[] = [
   {
     id: "flev-intent-arbitrage-engine",
     title: "FLEV Intent Arbitrage Engine",
-    status: "Completed Tactical Report",
-    category: "DeFi Intelligence / Intent Market Research",
-    stage: "Research → Tactical Report",
-    visibility: "Public summary / sensitive findings redacted",
+    status: "Shipped Intelligence Engine",
+    category: "Multi-Chain DeFi Intelligence / Solana Pilot",
+    stage: "Explainable Scoring V2 / Solana Pilot Run",
+    visibility: "Public summary / raw evidence redacted",
     summary:
-      "A tactical intelligence framework for analyzing intent-based arbitrage, solver behavior, execution routing, and DeFi opportunity risk.",
+      "Chain-agnostic intelligence framework for detecting developer intent before social hype. The first field test runs on Solana, tracking ecosystem GitHub momentum, official updates, package activity, and noise-adjusted build readiness.",
     problem:
-      "DeFi arbitrage is shifting from obvious pool-level price gaps toward intent systems, solver routing, and execution quality.",
+      "Fast-moving DeFi narratives often reach social channels after the alpha gap has already closed. Solana was selected as the first pilot network because of its high developer velocity, active package ecosystem, and rapid narrative cycles.",
     solution:
-      "Map actors, opportunity surfaces, routing risks, and tactical decision points into a reusable intelligence report format.",
-    evidence: ["Tactical report completed", "Public-safe summary available", "Sensitive strategy details redacted"],
-    cta: "Open Case Study",
+      "Run targeted cluster scanners on a pilot network, filter noisy evidence, deduplicate signals, and score each narrative using transparent multi-factor methodology before expanding to additional chains.",
+    evidence: ["Run ID: IAE-2026-05-21-0512Z", "Pilot network: Solana", "Latest intel run: 21 May 2026 · 05:12 UTC", "Sensitive operator routes redacted"],
+    cta: "Open DeFi Intel",
     accent: "purple",
   },
   {

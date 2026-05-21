@@ -13,22 +13,22 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
-    id: "intent-arbitrage-intelligence",
-    title: "Intent Arbitrage Intelligence",
-    type: "Research / Tactical DeFi Intelligence",
-    status: "Completed Report",
+    id: "intent-arbitrage-engine",
+    title: "FLEV Intent Arbitrage Engine",
+    type: "Chain-Agnostic Intent Intelligence Framework / Solana Pilot",
+    status: "Completed Tactical Report / Public-Safe Version",
     context:
-      "Intent-based execution changes the arbitrage surface from simple pool mispricing to solver routing, fill quality, and execution risk.",
+      "Fast-moving DeFi narratives often reach social channels after the alpha gap has already closed. Solana was selected as the first pilot network because of its high developer velocity, active package ecosystem, and rapid narrative cycles.",
     hypothesis:
-      "Mapping routing actors and opportunity surfaces can create a better tactical intelligence framework than chasing isolated price gaps.",
+      "Developer intent appears earlier than social hype. By monitoring GitHub activity, SDK/package movement, and official ecosystem updates on a pilot network, the framework can identify asymmetric builder windows before broader attention catches up.",
     method:
-      "Analyze actors, routing flow, risk surfaces, and tactical decision points, then package findings into a public-safe report structure.",
+      "The engine runs targeted cluster scanners, filters noisy evidence, deduplicates signals, and scores each narrative using Explainable Scoring V2: Evidence Strength, Alpha Gap, Build Readiness, Ecosystem Backing, and Noise Risk. The current field test uses Solana as the pilot network before expanding to additional chains.",
     signal:
-      "Solver behavior, routing quality, risk posture, and opportunity categories.",
+      "Run ID IAE-2026-05-21-0512Z · Pilot Network: Solana · Latest Intel Run 21 May 2026 · 05:12 UTC · Classification: Public-Safe Summary.",
     result:
-      "A tactical report designed to guide further DeFi intelligence workflows while keeping sensitive findings redacted.",
+      "Detected two high-priority Solana pilot clusters: AGENT_PAYMENT — 83/100 and INTENT — 83/100. Both were classified as Priority Build / Submit opportunities.",
     nextStep:
-      "Convert the report into a sanitized public summary and connect it to future opportunity radar modules.",
+      "Convert the strongest public-safe Solana pilot insight into a prototype or bounty submission, then generalize the scanner for additional networks while raw evidence packs, keyword trees, and tactical operator routes remain redacted.",
   },
   {
     id: "meteora-dlmm-sampling-bot",

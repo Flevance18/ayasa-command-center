@@ -127,6 +127,71 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(value));
 }
 
+const intentEngineClusters = [
+  { name: "AGENT_PAYMENT", score: 83, verdict: "PRIORITY BUILD / SUBMIT", color: "bg-[#ff00ff]" },
+  { name: "INTENT", score: 83, verdict: "PRIORITY BUILD / SUBMIT", color: "bg-[#00ffff]" },
+  { name: "QUANTUM", score: 62, verdict: "WATCHLIST & MONITOR", color: "bg-[#ffee00]" },
+  { name: "PRIVACY", score: 50, verdict: "WATCHLIST & MONITOR", color: "bg-white" },
+];
+
+const intentEngineMeta = {
+  runId: "IAE-2026-05-21-0512Z",
+  pilotNetwork: "PILOT NETWORK: SOLANA",
+  timestamp: "21 MAY 2026 · 05:12 UTC",
+  classification: "PUBLIC-SAFE SUMMARY",
+};
+
+function IntentEnginePanel() {
+  return <div className="space-y-4">
+    <div className="border-4 border-black bg-[#141018] p-4 text-[#fdfaf1] shadow-[7px_7px_0_#ff00ff]">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="font-mono text-[10px] font-black uppercase text-[#00ffff]">Signal: Flev Intent Arbitrage Engine</p>
+          <h3 className="mt-1 text-2xl font-black uppercase leading-none">Multi-Chain Pre-Hype Narrative Discovery</h3>
+          <p className="mt-2 max-w-2xl text-sm font-bold leading-tight text-white/80">Chain-agnostic scanner for finding asymmetric developer activity before it reaches social hype. Current pilot network: Solana.</p>
+        </div>
+        <div className="grid gap-1 font-mono text-[10px] font-black uppercase text-right">
+          <span className="border border-white/30 bg-black/30 px-2 py-1 text-[#ffee00]">{intentEngineMeta.runId}</span>
+          <span className="border border-white/30 bg-black/30 px-2 py-1 text-[#ff00ff]">{intentEngineMeta.pilotNetwork}</span>
+          <span className="border border-white/30 bg-black/30 px-2 py-1">{intentEngineMeta.timestamp}</span>
+          <span className="border border-white/30 bg-black/30 px-2 py-1 text-[#00ffff]">{intentEngineMeta.classification}</span>
+        </div>
+      </div>
+      <div className="mt-4 grid gap-2 md:grid-cols-4">
+        {["SOLANA GITHUB DEV MOMENTUM", "OFFICIAL ECOSYSTEM UPDATES", "SDK / PACKAGE ACTIVITY", "NOISE-FILTERED EVIDENCE"].map((source) => <span key={source} className="border border-white/30 bg-black/40 p-2 font-mono text-[10px] font-black uppercase text-white/80">{source}</span>)}
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <p className="font-black uppercase">Top narrative clusters</p>
+      {intentEngineClusters.map((cluster) => <div key={cluster.name} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]">
+        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] font-black uppercase">
+          <span>{cluster.name}</span>
+          <span>{cluster.score}/100 · {cluster.verdict}</span>
+        </div>
+        <div className="mt-2 h-4 border-2 border-black bg-[#fdfaf1]"><div className={clsx("h-full border-r-2 border-black", cluster.color)} style={{ width: `${cluster.score}%` }} /></div>
+      </div>)}
+    </div>
+
+    <div className="grid gap-3 md:grid-cols-[1fr_1.2fr]">
+      <div className="border-4 border-black bg-[#ffee00] p-3 shadow-[4px_4px_0_#050606]">
+        <p className="font-black uppercase">Explainable Scoring V2</p>
+        <div className="mt-2 grid gap-1 font-mono text-[10px] font-black uppercase">
+          <span>Evidence Strength · 30%</span>
+          <span>Alpha Gap · 25%</span>
+          <span>Build Readiness · 20%</span>
+          <span>Ecosystem Backing · 25%</span>
+          <span>Noise Risk · Penalty</span>
+        </div>
+      </div>
+      <div className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]">
+        <p className="font-black uppercase">Operator Verdict</p>
+        <p className="mt-2 text-sm font-bold leading-tight">Two high-conviction Solana pilot builder windows detected before broader narrative saturation: <b>AGENT_PAYMENT</b> and <b>INTENT</b>. The scanner is designed to generalize across additional networks. Raw evidence packs, keyword trees, and tactical build routes are intentionally redacted.</p>
+      </div>
+    </div>
+  </div>;
+}
+
 function GitHubSignal() {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -224,11 +289,11 @@ function WindowBody({ id }: { id: WindowId }) {
     return <div className="space-y-4"><div><p className="font-black uppercase">{meteoraDlmmBot.title}</p><p className="font-mono text-xs font-bold uppercase text-black/70">{meteoraDlmmBot.cadence}</p></div><div className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><p className="font-mono text-[10px] font-black uppercase">Current Phase</p><p className="text-2xl font-black uppercase text-[#bc13fe]">{meteoraDlmmBot.status}</p><p className="mt-2 text-sm font-bold leading-tight">{meteoraDlmmBot.safety}</p></div><div className="grid grid-cols-2 gap-2">{meteoraDlmmBot.metrics.map((metric) => <div key={metric.label} className="border-4 border-black bg-[#fdfaf1] p-2 shadow-[3px_3px_0_#050606]"><p className="font-mono text-[10px] font-black uppercase text-black/60">{metric.label}</p><p className="text-sm font-black uppercase leading-tight">{metric.value}</p></div>)}</div><div className="space-y-2">{botLifecycle.map((stage, index) => <div key={stage.label} className="flex items-center gap-2 font-mono text-xs font-black uppercase"><span className={clsx("grid size-7 place-items-center border-2 border-black", stage.status === "active" && "bg-[#ffee00]", stage.status === "done" && "bg-[#00ffff]", stage.status === "locked" && "bg-white opacity-70")}>{index + 1}</span><span>{stage.label}</span><span className="ml-auto text-[10px]">{stage.status}</span></div>)}</div></div>;
   }
   if (id === "caseStudies") {
-    return <div className="space-y-4"><div><p className="font-black uppercase">Case studies</p><p className="font-mono text-xs font-bold text-black/70">Problem → hypothesis → method → signal → result.</p></div>{caseStudies.map((study) => <article key={study.id} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><h3 className="text-lg font-black uppercase leading-none">{study.title}</h3><p className="mt-1 font-mono text-[10px] font-black uppercase text-[#bc13fe]">{study.type} / {study.status}</p><div className="mt-3 space-y-2 text-sm leading-tight"><p><b>Context:</b> {study.context}</p><p><b>Method:</b> {study.method}</p><p><b>Result:</b> {study.result}</p><p><b>Next:</b> {study.nextStep}</p></div></article>)}</div>;
+    return <div className="space-y-4"><div><p className="font-black uppercase">Case studies</p><p className="font-mono text-xs font-bold text-black/70">Problem → hypothesis → method → signal → result.</p></div>{caseStudies.map((study) => <article key={study.id} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><h3 className="text-lg font-black uppercase leading-none">{study.title}</h3><p className="mt-1 font-mono text-[10px] font-black uppercase text-[#bc13fe]">{study.type} / {study.status}</p><div className="mt-3 space-y-2 text-sm leading-tight"><p><b>Context:</b> {study.context}</p><p><b>Hypothesis:</b> {study.hypothesis}</p><p><b>Method:</b> {study.method}</p><p><b>Signal:</b> {study.signal}</p><p><b>Result:</b> {study.result}</p><p><b>Next:</b> {study.nextStep}</p></div></article>)}</div>;
   }
   if (id === "defi") {
     const intelItems = ["Intent Arbitrage Engine: tactical report completed", "Meteora DLMM Research: hourly sampling active", "Risk Model: simulation-before-execution", "Visibility: public-safe summaries only"];
-    return <div className="space-y-3"><p className="font-black uppercase">DeFi Intel Feed</p>{intelItems.map((item) => <div key={item} className="flex items-start gap-2 border-2 border-black bg-white p-2 font-mono text-sm font-black text-black"><RadioTower size={16} className="mt-0.5 text-[#bc13fe]" /> <span>{item}</span></div>)}</div>;
+    return <div className="space-y-4"><div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-black uppercase">DeFi Intel Feed</p><p className="font-mono text-xs font-bold uppercase text-black/70">Run ID + timestamped signal board for public-safe intelligence outputs.</p></div><span className="brutal-chip bg-[#00ffff] font-mono text-[10px]">TIMESTAMPED</span></div><IntentEnginePanel />{intelItems.map((item) => <div key={item} className="flex items-start gap-2 border-2 border-black bg-white p-2 font-mono text-sm font-black text-black"><RadioTower size={16} className="mt-0.5 text-[#bc13fe]" /> <span>{item}</span></div>)}</div>;
   }
   if (id === "buildLog") {
     return <div className="space-y-3"><p className="font-black uppercase">Build Log</p><p className="font-mono text-xs font-bold text-black/70">Public timeline of shipped work and active experiments.</p>{buildLog.map((entry) => <div key={`${entry.date}-${entry.project}`} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><div className="flex items-center justify-between gap-2"><span className="font-mono text-[10px] font-black uppercase">{entry.date}</span><span className={clsx("border-2 border-black px-2 py-1 font-mono text-[10px] font-black uppercase", entry.status === "completed" && "bg-[#00ffff]", entry.status === "active" && "bg-[#ffee00]", entry.status === "planned" && "bg-white")}>{entry.status}</span></div><p className="mt-2 font-black uppercase leading-none">{entry.project}</p><p className="mt-2 text-sm font-bold leading-tight">{entry.update}</p></div>)}</div>;
