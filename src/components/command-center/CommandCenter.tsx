@@ -103,6 +103,116 @@ function useClock() {
   };
 }
 
+type GitHubRepo = {
+  name: string;
+  html_url: string;
+  description: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  updated_at: string;
+};
+
+type GitHubUser = {
+  login: string;
+  public_repos: number;
+  followers: number;
+  following: number;
+  created_at: string;
+  updated_at: string;
+  html_url: string;
+};
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(value));
+}
+
+function GitHubSignal() {
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [status, setStatus] = useState("SYNCING LIVE PROFILE...");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadGitHubSignal() {
+      try {
+        const cacheBust = `t=${Date.now()}`;
+        const [userResponse, repoResponse] = await Promise.all([
+          fetch(`https://api.github.com/users/Flevance18?${cacheBust}`, { cache: "no-store", signal: controller.signal }),
+          fetch(`https://api.github.com/users/Flevance18/repos?per_page=100&sort=updated&${cacheBust}`, { cache: "no-store", signal: controller.signal }),
+        ]);
+        if (!userResponse.ok || !repoResponse.ok) throw new Error("GitHub API unavailable");
+        const userData = await userResponse.json() as GitHubUser;
+        const repoData = await repoResponse.json() as GitHubRepo[];
+        setUser(userData);
+        setRepos(repoData);
+        setStatus("LIVE PUBLIC GITHUB API · NO STATIC CARD CACHE");
+      } catch (error) {
+        if (!controller.signal.aborted) setStatus("GITHUB API RATE LIMITED — OPEN PROFILE FOR SOURCE");
+      }
+    }
+    loadGitHubSignal();
+    return () => controller.abort();
+  }, []);
+
+  const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+  const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0);
+  const activeLanguages = Array.from(new Set(repos.map((repo) => repo.language).filter(Boolean))) as string[];
+  const languageText = activeLanguages.join(" / ") || "README";
+  const accountAgeDays = user ? Math.max(1, Math.floor((Date.now() - new Date(user.created_at).getTime()) / 86_400_000)) : 0;
+  const updatedRepos = repos.filter((repo) => new Date(repo.updated_at).getFullYear() === new Date().getFullYear()).length;
+  const latestRepo = repos[0];
+  const grade = (user?.public_repos ?? repos.length) >= 3 ? "A+" : "A";
+  const statRows = [
+    ["☆", "Total Stars", totalStars],
+    ["⟳", `Updated Repos (${new Date().getFullYear()})`, updatedRepos],
+    ["⇅", "Total Forks", totalForks],
+    ["①", "Public Repos", user?.public_repos ?? repos.length],
+    ["⧉", "Active Languages", activeLanguages.length || 1],
+  ];
+
+  return <div className="space-y-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <p className="font-black uppercase">Live GitHub signal for <span className="font-mono">Flevance18</span>.</p>
+        <p className="font-mono text-[10px] font-black uppercase text-black/60">{status}</p>
+      </div>
+      <span className="brutal-chip bg-[#00ffff] font-mono text-[10px]">AUTO-SYNC</span>
+    </div>
+
+    <div className="border-4 border-black bg-[#141018] p-4 text-[#fdfaf1] shadow-[7px_7px_0_#ff00ff]">
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div className="min-w-[210px] flex-1">
+          <p className="font-mono text-sm font-black text-[#ff00ff]">{user?.login ?? "Flevance18"}'s GitHub Stats</p>
+          <ul className="mt-3 space-y-1.5 font-mono text-[12px] font-black text-[#b8ff3c]">
+            {statRows.map(([icon, label, value]) => <li key={label} className="flex items-center gap-2"><span className="w-4 text-[#fdfaf1]">{icon}</span><span>{label}: {value}</span></li>)}
+          </ul>
+          <div className="mt-4 grid grid-cols-3 gap-2 font-mono text-[10px] font-black uppercase">
+            <div className="border border-white/40 bg-black/30 p-2"><p className="text-white/60">Joined</p><p className="text-[#00ffff]">{accountAgeDays ? `${accountAgeDays} days ago` : "sync"}</p></div>
+            <div className="border border-white/40 bg-black/30 p-2"><p className="text-white/60">Repos</p><p className="text-[#00ffff]">{user?.public_repos ?? repos.length}</p></div>
+            <div className="border border-white/40 bg-black/30 p-2"><p className="text-white/60">Stack</p><p className="text-[#00ffff]">{languageText}</p></div>
+          </div>
+        </div>
+        <div className="grid size-28 place-items-center rounded-full border-[11px] border-[#231236] bg-[#22133a] text-center shadow-[inset_-14px_-14px_0_#ff00ff,4px_4px_0_#00ffff]">
+          <div><p className="text-4xl font-black text-[#00ffff]">{grade}</p><p className="font-mono text-[9px] font-black uppercase text-white">live</p></div>
+        </div>
+      </div>
+      <div className="mt-4 border-t border-white/30 pt-3 font-mono text-[10px] font-black uppercase text-white/70">
+        Latest repo: <span className="text-[#00ffff]">{latestRepo ? latestRepo.name : "syncing"}</span>{latestRepo ? ` · updated ${formatDate(latestRepo.updated_at)}` : ""}
+      </div>
+    </div>
+
+    <div className="grid gap-2 md:grid-cols-3">
+      {repos.slice(0, 3).map((repo) => <a key={repo.name} href={repo.html_url} target="_blank" rel="noreferrer" className="block border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606] transition-transform hover:-translate-y-1">
+        <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="font-black uppercase leading-none">{repo.name}</h4><span className="border-2 border-black bg-[#ffee00] px-2 py-1 font-mono text-[10px] font-black uppercase">{repo.language ?? "README"}</span></div>
+        <p className="mt-2 text-sm font-bold leading-tight text-black/75">{repo.description ?? "Public GitHub profile / proof-of-work repository."}</p>
+        <p className="mt-2 font-mono text-[10px] font-black uppercase text-black/60">★ {repo.stargazers_count} / forks {repo.forks_count} / updated {formatDate(repo.updated_at)}</p>
+      </a>)}
+    </div>
+    <a className="neo-button inline-flex bg-[#ff00ff]" href="https://github.com/Flevance18" target="_blank" rel="noreferrer">Open GitHub ↗</a>
+  </div>;
+}
+
 function WindowBody({ id }: { id: WindowId }) {
   if (id === "profile") {
     return <div className="grid gap-4 md:grid-cols-[150px_1fr] md:items-start"><div className="border-4 border-black bg-white p-2 shadow-[5px_5px_0_#ff00ff]"><Image src="/ayasa-profile.jpg" alt="Ayasa profile portrait" width={240} height={240} className="aspect-square w-full object-cover" priority /></div><div className="space-y-4"><p className="font-mono text-xs font-black uppercase text-black/70">Ayasa // Flevance18</p><h2 className="text-2xl font-black uppercase leading-none md:text-3xl">I AM A FORENSIC RESEARCHER &amp; MINING OPTIMIZER.</h2><p className="text-sm font-bold leading-tight md:text-base">Surgical analysis of decentralized protocols, hardening of mining ecosystems, and relentless tracking of systemic anomalies. Turning chaotic data into actionable intelligence.</p><div className="grid grid-cols-3 gap-2 text-center font-mono text-xs"><b className="brutal-chip bg-[#ffee00]">FORENSIC</b><b className="brutal-chip bg-[#00ffff]">MINING</b><b className="brutal-chip bg-[#ff00ff]">INTEL</b></div></div></div>;
@@ -124,7 +234,7 @@ function WindowBody({ id }: { id: WindowId }) {
     return <div className="space-y-3"><p className="font-black uppercase">Build Log</p><p className="font-mono text-xs font-bold text-black/70">Public timeline of shipped work and active experiments.</p>{buildLog.map((entry) => <div key={`${entry.date}-${entry.project}`} className="border-4 border-black bg-white p-3 shadow-[4px_4px_0_#050606]"><div className="flex items-center justify-between gap-2"><span className="font-mono text-[10px] font-black uppercase">{entry.date}</span><span className={clsx("border-2 border-black px-2 py-1 font-mono text-[10px] font-black uppercase", entry.status === "completed" && "bg-[#00ffff]", entry.status === "active" && "bg-[#ffee00]", entry.status === "planned" && "bg-white")}>{entry.status}</span></div><p className="mt-2 font-black uppercase leading-none">{entry.project}</p><p className="mt-2 text-sm font-bold leading-tight">{entry.update}</p></div>)}</div>;
   }
   if (id === "github") {
-    return <div className="space-y-3"><p className="font-bold">Live GitHub signal for <span className="font-mono">Flevance18</span>.</p><Image unoptimized width={460} height={190} className="w-full border-4 border-black bg-white" alt="Flevance18 GitHub stats" src="https://github-readme-stats-sigma-five.vercel.app/api?username=Flevance18&show_icons=true&theme=radical&hide_border=true&title_color=ff00ff&icon_color=ffee00" /><a className="neo-button inline-flex" href="https://github.com/Flevance18" target="_blank" rel="noreferrer">Open GitHub ↗</a></div>;
+    return <GitHubSignal />;
   }
   return <div className="space-y-4"><p>Patch into Ayasa channels.</p><div className="flex flex-wrap gap-3"><a className="neo-button" href="https://github.com/Flevance18" target="_blank" rel="noreferrer">GitHub</a><a className="neo-button bg-[#00ffff]" href="https://x.com/Ayasa_18" target="_blank" rel="noreferrer">X / Twitter</a></div><p className="font-mono text-xs">No secrets stored. External links only.</p></div>;
 }
